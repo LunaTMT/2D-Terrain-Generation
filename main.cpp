@@ -11,6 +11,7 @@ const int sizeY = 30;
 const float tileSize = SCREEN_WIDTH / sizeX;
 const float borderThickness = 1.f;
 
+//new
 int main() {
     sf::RenderWindow window(sf::VideoMode(SCREEN_WIDTH, SCREEN_HEIGHT), "Flat 2D World Generation");
     window.setFramerateLimit(60);
