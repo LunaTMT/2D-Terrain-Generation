@@ -7,10 +7,11 @@
 const float SCREEN_WIDTH = 800.f;
 const float SCREEN_HEIGHT = 600.f;
 
-const int sizeX = 32;
-const int sizeY = 30;
-const float tileSize = SCREEN_WIDTH / sizeX;
+const int COLS = 32; // Renamed sizeX to COLS
+const int ROWS = 24; // Renamed sizeY to ROWS
+const float tileSize = SCREEN_WIDTH / COLS; // Updated tileSize calculation
 const float borderThickness = 1.f;
+
 
 // Define parameters for generating terrain using Perlin noise
 const float noiseScale = 0.1f;
@@ -28,8 +29,6 @@ int main() {
 
     sf::RectangleShape tile(sf::Vector2f(tileSize, tileSize));
     tile.setOutlineThickness(borderThickness);
-
-    const float center = sizeY * tileSize / 2;
 
     sf::Font font;
     if (!font.loadFromFile("font.ttf")) {
@@ -49,62 +48,78 @@ int main() {
     sf::CircleShape dot(2.f); // Define a small circle shape for the dots
     dot.setFillColor(sf::Color::Red); // Set the color of the dots
 
-    for (int x = 0; x < sizeX; ++x) {
-        for (int y = 0; y < sizeY; ++y) {
-            int xPos = x * tileSize;
-            int yPos = y * tileSize;
-
-            tile.setPosition(xPos, yPos);
-
-            // Calculate the height of the tile based on Perlin noise
-            float noiseValue = noise(x); // Use x coordinate for noise generation
-            float height = 100 + noiseValue * 300; // Adjust multiplier for different heights
-            
-            sf::Color colour;
-
-            if (yPos < height) {
-                colour = skyColor;
-            } else if (yPos <= height + 25) {
-                colour = grassColor;
-            } else if (yPos <= height + 75) {
-                colour = dirtColor;
-            } else {
-                colour = stoneColor;
-            }
-     
-            
-
-            tile.setFillColor(colour);
-
-
-            dot.setPosition(x * tileSize, height);
-            window.draw(dot);
-
-            tile.setOutlineColor(sf::Color::Black);
-            window.draw(tile);
-
-            std::ostringstream ss;
-            if (x == 0) {
-                ss <<  y;
-            } else if (y == 0) {
-                ss <<  x;
-            } else {
-                continue;
-            }
-            text.setString(ss.str());
-            text.setPosition(x * tileSize + 0.5f * tileSize, y * tileSize + 0.5f * tileSize);
-            window.draw(text);
-        }
-    }
-
-    window.display();
+    float viewOffsetX = 0.f;
 
     while (window.isOpen()) {
         sf::Event event;
         while (window.pollEvent(event)) {
             if (event.type == sf::Event::Closed)
                 window.close();
+            else if (event.type == sf::Event::KeyPressed) {
+                // Adjust view offset based on arrow keys or WASD keys
+                switch (event.key.code) {
+                    case sf::Keyboard::Left:
+                    case sf::Keyboard::A:
+                        viewOffsetX -= tileSize;
+                        break;
+                    case sf::Keyboard::Right:
+                    case sf::Keyboard::D:
+                        viewOffsetX += tileSize;
+                        break;
+                    default:
+                        break;
+                }
+            }
         }
+
+        window.clear();
+
+        for (int x = 0; x <= COLS; ++x) { // Add 2 extra tiles on each side
+            for (int y = 0; y <= ROWS; ++y) {
+                int xPos = x  * tileSize; // Adjust x position for additional tiles
+                int yPos = y * tileSize;
+
+                tile.setPosition(xPos, yPos);
+
+                // Calculate the height of the tile based on Perlin noise
+                float noiseValue = noise(x + viewOffsetX / tileSize); // Use adjusted x coordinate for noise generation
+                float height = 100 + noiseValue * 300; // Adjust multiplier for different heights
+                
+                sf::Color colour;
+
+                if (yPos < height) {
+                    colour = skyColor;
+                } else if (yPos <= height + 50) {
+                    colour = grassColor;
+                } else if (yPos <= height + 100) {
+                    colour = dirtColor;
+                } else {
+                    colour = stoneColor;
+                }
+
+                tile.setFillColor(colour);
+
+                dot.setPosition(xPos, height);
+                window.draw(dot);
+
+                tile.setOutlineColor(sf::Color::Black);
+                window.draw(tile);
+
+                std::ostringstream ss;
+                if (x == 0) {
+                    ss <<  y+1;
+                } else if (y == 0) {
+                    ss <<  x+1 + viewOffsetX / tileSize; // Adjust x position for additional tiles
+                } else {
+                    continue;
+                }
+                text.setString(ss.str());
+                text.setPosition(xPos + 0.5f * tileSize, yPos + 0.5f * tileSize);
+                window.draw(text);
+            }
+        }
+
+        window.display();
     }
 
     return 0;
