@@ -1,82 +1,60 @@
 #include <SFML/Graphics.hpp>
-#include <iostream>
 #include <vector>
-#include <sstream>
+#include <cstdlib> // For rand() and srand()
+#include <ctime>   // For time()
 
-const float SCREEN_WIDTH = 800.f;
-const float SCREEN_HEIGHT = 600.f;
+int width = 800;
+int height = 600;
 
-const int sizeX = 32;
-const int sizeY = 30;
-const float tileSize = SCREEN_WIDTH / sizeX;
-const float borderThickness = 1.f;
+int cols = 32; 
+int tileSize = width / cols;
+int rows = height / tileSize;
+int test = 0;
 
-//new
-int main() {
-    sf::RenderWindow window(sf::VideoMode(SCREEN_WIDTH, SCREEN_HEIGHT), "Flat 2D World Generation");
-    window.setFramerateLimit(60);
+// Function to generate a random SFML color
+sf::Color getRandomColor() {
+    // Generate random values for red, green, and blue components
+    sf::Uint8 red = std::rand() % 256;     // Random value for red component
+    sf::Uint8 green = std::rand() % 256;   // Random value for green component
+    sf::Uint8 blue = std::rand() % 256;    // Random value for blue component
 
-    sf::RectangleShape tile(sf::Vector2f(tileSize, tileSize));
-    tile.setOutlineThickness(borderThickness);
+    // Create and return the random color
+    return sf::Color(red, green, blue);
+}
 
-    const float skyHeight = 100.f;
-    const float grassHeight = 200.f;
-    const float dirtHeight = 300.f;
-    const float center = sizeY * tileSize / 2;
-    const float stoneHeight = 400.f;
+int main(){
 
-    sf::Font font;
-    if (!font.loadFromFile("font.ttf")) {
-        std::cerr << "Failed to load font. Using default font." << std::endl;
-    }
+    // Seed the random number generator
+    std::srand(static_cast<unsigned int>(std::time(nullptr)));
 
-    sf::Text text;
-    text.setFont(font);
-    text.setCharacterSize(10);
-    text.setFillColor(sf::Color::White);
-
-    for (int x = 0; x < sizeX; ++x) {
-        for (int y = 0; y < sizeY; ++y) {
-            tile.setPosition(x * tileSize, y * tileSize);
-
-            if (y == 0 || x == 0) {
-                tile.setFillColor(sf::Color::Red);
-            } else if (y * tileSize < skyHeight) {
-                tile.setFillColor(sf::Color::Blue);
-            } else if (y * tileSize < grassHeight) {
-                tile.setFillColor(sf::Color::Green);
-            } else if (y * tileSize < dirtHeight) {
-                tile.setFillColor(sf::Color(139, 69, 19));
-            } else if (y * tileSize < stoneHeight) {
-                tile.setFillColor(sf::Color(128, 128, 128));
-            }
-
-            tile.setOutlineColor(sf::Color::White);
-            window.draw(tile);
-
-            std::ostringstream ss;
-            if (x == 0) {
-                ss <<  y;
-            } else if (y == 0) {
-                ss <<  x;
-            } else {
-                continue;
-            }
-            text.setString(ss.str());
-            text.setPosition(x * tileSize + 0.5f * tileSize, y * tileSize + 0.5f * tileSize);
-            window.draw(text);
-        }
-    }
-
-    window.display();
+    sf::RenderWindow window(sf::VideoMode(width, height), "2D Terrain Generation");
 
     while (window.isOpen()) {
+        
         sf::Event event;
         while (window.pollEvent(event)) {
-            if (event.type == sf::Event::Closed)
+            if (event.type == sf::Event::Closed) {
                 window.close();
+            } else if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Escape) {
+                window.close();
+            }
         }
-    }
 
+        window.clear();
+
+        for (int row = 0; row < rows; ++row){
+            for (int col = 0; col < cols; ++col){
+                sf::RectangleShape tile(sf::Vector2f(tileSize, tileSize));
+                tile.setPosition(col * tileSize, row * tileSize);
+                tile.setFillColor(sf::Color::White);
+                tile.setOutlineThickness(1); // 1 pixel thick outline
+                tile.setOutlineColor(sf::Color::Black); // Black outline color
+                window.draw(tile);
+            }
+        }        
+
+        window.display();
+
+    }
     return 0;
 }
