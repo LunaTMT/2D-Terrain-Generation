@@ -2,6 +2,7 @@
 #include <iostream>
 #include <vector>
 #include <sstream>
+#include <cmath>
 
 const float SCREEN_WIDTH = 800.f;
 const float SCREEN_HEIGHT = 600.f;
@@ -11,6 +12,16 @@ const int sizeY = 30;
 const float tileSize = SCREEN_WIDTH / sizeX;
 const float borderThickness = 1.f;
 
+// Define parameters for generating terrain using Perlin noise
+const float noiseScale = 0.1f;
+const float noiseOffset = 100.f;
+
+float noise(float x) {
+    // Basic implementation of 1D Perlin noise
+    x = x * noiseScale + noiseOffset;
+    return std::sin(x) * 0.5f + 0.5f;
+}
+
 int main() {
     sf::RenderWindow window(sf::VideoMode(SCREEN_WIDTH, SCREEN_HEIGHT), "Flat 2D World Generation");
     window.setFramerateLimit(60);
@@ -18,39 +29,58 @@ int main() {
     sf::RectangleShape tile(sf::Vector2f(tileSize, tileSize));
     tile.setOutlineThickness(borderThickness);
 
-    const float skyHeight = 100.f;
-    const float grassHeight = 200.f;
-    const float dirtHeight = 300.f;
     const float center = sizeY * tileSize / 2;
-    const float stoneHeight = 400.f;
 
     sf::Font font;
     if (!font.loadFromFile("font.ttf")) {
         std::cerr << "Failed to load font. Using default font." << std::endl;
     }
-
+    
+    sf::Color skyColor(135, 206, 250); // Sky Blue
+    sf::Color grassColor(34, 139, 34); // Dark Green
+    sf::Color dirtColor(139, 69, 19);  // Brown
+    sf::Color stoneColor(169, 169, 169); // Dark Gray
+    
     sf::Text text;
     text.setFont(font);
     text.setCharacterSize(10);
-    text.setFillColor(sf::Color::White);
+    text.setFillColor(sf::Color::Black);
+
+    sf::CircleShape dot(2.f); // Define a small circle shape for the dots
+    dot.setFillColor(sf::Color::Red); // Set the color of the dots
 
     for (int x = 0; x < sizeX; ++x) {
         for (int y = 0; y < sizeY; ++y) {
-            tile.setPosition(x * tileSize, y * tileSize);
+            int xPos = x * tileSize;
+            int yPos = y * tileSize;
 
-            if (y == 0 || x == 0) {
-                tile.setFillColor(sf::Color::Red);
-            } else if (y * tileSize < skyHeight) {
-                tile.setFillColor(sf::Color::Blue);
-            } else if (y * tileSize < grassHeight) {
-                tile.setFillColor(sf::Color::Green);
-            } else if (y * tileSize < dirtHeight) {
-                tile.setFillColor(sf::Color(139, 69, 19));
-            } else if (y * tileSize < stoneHeight) {
-                tile.setFillColor(sf::Color(128, 128, 128));
+            tile.setPosition(xPos, yPos);
+
+            // Calculate the height of the tile based on Perlin noise
+            float noiseValue = noise(x); // Use x coordinate for noise generation
+            float height = 100 + noiseValue * 300; // Adjust multiplier for different heights
+            
+            sf::Color colour;
+
+            if (yPos < height) {
+                colour = skyColor;
+            } else if (yPos <= height + 25) {
+                colour = grassColor;
+            } else if (yPos <= height + 75) {
+                colour = dirtColor;
+            } else {
+                colour = stoneColor;
             }
+     
+            
 
-            tile.setOutlineColor(sf::Color::White);
+            tile.setFillColor(colour);
+
+
+            dot.setPosition(x * tileSize, height);
+            window.draw(dot);
+
+            tile.setOutlineColor(sf::Color::Black);
             window.draw(tile);
 
             std::ostringstream ss;
