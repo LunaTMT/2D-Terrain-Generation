@@ -10,6 +10,11 @@
                 "${file}",
                 "-o",
                 "${fileDirname}/${fileBasenameNoExtension}",
+                "src/entities/*.cpp",
+                //"src/utilities/*.cpp",
+                "-Iinclude",
+                "-Iinclude/entities", 
+                "-Iinclude/utilities",
                 "-lsfml-graphics",
                 "-lsfml-window",
                 "-lsfml-system" //

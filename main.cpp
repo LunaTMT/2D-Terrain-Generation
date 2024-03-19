@@ -4,29 +4,8 @@
 #include <random>
 #include <unordered_map>
 #include "PerlinNoise.hpp" // Include the Perlin noise header
+#include "globals.h"
 
-// Constants
-const float SCREEN_WIDTH = 800.f;
-const float SCREEN_HEIGHT = 600.f;
-
-// Tile map dimensions
-const int mapRows = 1200;
-const int mapCols = 4200;
-
-/*
-
-Small: 4200x1200
-Medium: 6400x1800
-Large: 8400x2400
-
-*/
-
-
-// Colours
-const sf::Color SKY_COLOR(135, 206, 250);    // Sky Blue
-const sf::Color GRASS_COLOR(34, 139, 34);    // Dark Green
-const sf::Color DIRT_COLOR(139, 69, 19);     // Brown
-const sf::Color STONE_COLOR(169, 169, 169);  // Dark Gray
 
 // Terrain enum
 enum Terrain {
@@ -75,7 +54,7 @@ int main() {
 
                 if (event.key.code == sf::Keyboard::Space) {
                     generateTileMap(tileMap);
-                    std::cout << "Generating " << i << std::endl;
+                    std::cout << "Generating new " << i << std::endl;
                     i++;
 
                 } else if (event.key.code == sf::Keyboard::Z) {
@@ -124,14 +103,7 @@ int main() {
         for (int i = 0, currentRow = startRow; currentRow < endRow; ++i, ++currentRow) {
             for (int j = 0, currentCol = startCol; currentCol < endCol; ++j, ++currentCol) {
 
-                // Draw black border rectangle
-                sf::RectangleShape borderRect(sf::Vector2f(tileWidth, tileHeight));
-                borderRect.setPosition(j * tileWidth, i * tileHeight);
-                borderRect.setFillColor(sf::Color::Black);
-                window.draw(borderRect);
-
-
-                sf::RectangleShape tile(sf::Vector2f(tileWidth - 1, tileHeight - 1));
+                sf::RectangleShape tile(sf::Vector2f(tileWidth, tileHeight));
                 tile.setPosition(j * tileWidth, i * tileHeight);
 
                 switch (tileMap[currentRow][currentCol]) {
@@ -150,7 +122,6 @@ int main() {
                     default:
                         break;
                 }
-
                 window.draw(tile);
             }
         }
