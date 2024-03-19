@@ -62,6 +62,9 @@ int main() {
     float tileWidth  = SCREEN_WIDTH / viewportCols;
     float tileHeight = SCREEN_HEIGHT / viewportRows;
 
+    int xOffset = 0;
+    int yOffset = 0;
+
     int i = 0;
     while (window.isOpen()) {
         sf::Event event;
@@ -80,14 +83,31 @@ int main() {
                     viewportRows *= 1.1;
                     tileWidth = SCREEN_WIDTH / viewportCols;
                     tileHeight = SCREEN_HEIGHT / viewportRows;
-                    std::cout << "Increase " << std::endl;
+                    std::cout << "Increase " << i << std::endl;
 
                 } else if (event.key.code == sf::Keyboard::X) {
                     viewportCols *= 0.9;
                     viewportRows *= 0.9;
                     tileWidth = SCREEN_WIDTH / viewportCols;
                     tileHeight = SCREEN_HEIGHT / viewportRows;
-                    std::cout << "Decrease " << std::endl;
+                    i++;
+                    std::cout << "Decrease " << i << std::endl;
+                } else if (event.key.code == sf::Keyboard::Left){
+                    xOffset--;
+                    i++;
+                    std::cout << "LEFT " << i << std::endl;
+                } else if (event.key.code == sf::Keyboard::Right){
+                    xOffset++;
+                    i++;
+                    std::cout << "RIGHT " << i << std::endl;
+                } else if (event.key.code == sf::Keyboard::Down){
+                    yOffset++;
+                    i++;
+                    std::cout << "DOWN " << i << std::endl;
+                } else if (event.key.code == sf::Keyboard::Up){
+                    yOffset--;
+                    i++;
+                    std::cout << "UP " << i << std::endl;
                 }
             }
         }
@@ -95,10 +115,13 @@ int main() {
         window.clear();
 
         //centering viewport for given screen size
-        int startCol = (mapCols >> 1) - (viewportCols >> 1);
+        int startCol = (mapCols >> 1) - (viewportCols >> 1) + xOffset;
         int endCol = startCol + viewportCols;
 
-        for (int i = 0; i < viewportRows; ++i) {
+        int startRow = 0 + yOffset;
+        int endRow = startRow + viewportRows;
+
+        for (int i = 0, currentRow = startRow; currentRow < endRow; ++i, ++currentRow) {
             for (int j = 0, currentCol = startCol; currentCol < endCol; ++j, ++currentCol) {
 
                 // Draw black border rectangle
@@ -111,7 +134,7 @@ int main() {
                 sf::RectangleShape tile(sf::Vector2f(tileWidth - 1, tileHeight - 1));
                 tile.setPosition(j * tileWidth, i * tileHeight);
 
-                switch (tileMap[i+50][currentCol]) {
+                switch (tileMap[currentRow][currentCol]) {
                     case SKY:
                         tile.setFillColor(SKY_COLOR);
                         break;
@@ -141,7 +164,7 @@ int main() {
 
 void generateTileMap(int ** tileMap) {
     // Create multiple Perlin noise layers with different frequencies and amplitudes
-    std::vector<float> frequencies = {0.02f, 0.05f, 0.1f}; // Adjust frequencies for more or fewer hills
+    std::vector<float> frequencies = {0.00001f, 0.001f, 0.1f}; // Adjust frequencies for more or fewer hills
     std::vector<float> amplitudes = {60.f, 50.f, 25.f}; // Adjust amplitudes for higher or lower hills
 
     // SEED PERLIN
@@ -163,7 +186,8 @@ void generateTileMap(int ** tileMap) {
 
         for (int i = 0; i < mapRows; ++i) {
             int diff = std::abs(grass_height - i);
-
+            
+            
             if (i < grass_height) {
                 tileMap[i][j] = SKY;
             } else if (diff <= 0) {
