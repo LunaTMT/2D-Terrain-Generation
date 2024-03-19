@@ -5,6 +5,7 @@
 #include <unordered_map>
 #include "PerlinNoise.hpp" // Include the Perlin noise header
 #include "globals.h"
+#include "player.h"
 
 
 // Terrain enum
@@ -24,8 +25,16 @@ int main() {
     sf::RenderWindow window(sf::VideoMode(SCREEN_WIDTH, SCREEN_HEIGHT), "Flat 2D World Generation");
     window.setFramerateLimit(60);
 
-    sf::CircleShape dot(2.f);
-    dot.setFillColor(sf::Color::Red);
+    // Load player texture
+    sf::Texture playerTexture;
+    if (!playerTexture.loadFromFile("Assets/textures/player.png")) {
+        std::cerr << "Failed to load player texture!" << std::endl;
+        return 1;
+    }
+
+    // Initialize player
+    Player player(0, 0); // Initialize player at position (0, 0)
+
 
     //The following 2D array is dynamically created on the heap for large array sizes
     int** tileMap = new int*[mapRows];
@@ -45,6 +54,15 @@ int main() {
     int yOffset = 0;
 
     int i = 0;
+
+    sf::Clock clock;
+    float deltaTime = 0.0f;
+
+    sf::Time elapsedTime = clock.restart();
+    deltaTime = elapsedTime.asSeconds();
+
+
+
     while (window.isOpen()) {
         sf::Event event;
         while (window.pollEvent(event)) {
@@ -93,13 +111,26 @@ int main() {
 
         window.clear();
 
+        int playerX = (viewportCols >> 1) * tileWidth;
+        int playerY = (viewportRows >> 1) * tileHeight;
+
+        float x = player.getPosition().x;
+        float y = player.getPosition().y;
+
         //centering viewport for given screen size
-        int startCol = (mapCols >> 1) - (viewportCols >> 1) + xOffset;
+        int startCol = player.getPosition().x - (viewportCols >> 1) + xOffset;
         int endCol = startCol + viewportCols;
 
-        int startRow = 0 + yOffset;
+        int startRow = (player.getPosition().y / tileHeight) + yOffset;
         int endRow = startRow + viewportRows;
 
+       
+
+        player.setPosition(playerX, playerY);
+        player.update(deltaTime);
+
+
+        //Render Tilemap
         for (int i = 0, currentRow = startRow; currentRow < endRow; ++i, ++currentRow) {
             for (int j = 0, currentCol = startCol; currentCol < endCol; ++j, ++currentCol) {
 
@@ -125,6 +156,8 @@ int main() {
                 window.draw(tile);
             }
         }
+
+        player.draw(window);
 
         window.display();
     }
