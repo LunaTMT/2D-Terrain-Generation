@@ -24,6 +24,14 @@ public:
     sf::Vector2f getPosition() const;
 
     void draw(sf::RenderWindow& window);
+
+    void moveLeft();
+
+    void moveRight();
+
+    void moveUp();
+
+    void moveDown();
 };
 
 #endif // PLAYER_H
