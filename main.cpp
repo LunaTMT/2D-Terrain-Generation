@@ -12,7 +12,7 @@ public:
     Game() : window(sf::VideoMode(SCREEN_WIDTH, SCREEN_HEIGHT), "Flat 2D World Generation"),
              playerTexture(),
              tileMap(mapRows, mapCols),
-             player(CENTRE_X, findPlayerStartingRow(tileMap) * tileHeight) {
+             player(mapCentreX, findPlayerStartingRow(tileMap) * tileHeight) {
         window.setFramerateLimit(60);
         if (!playerTexture.loadFromFile("Assets/textures/player.png")) {
             std::cerr << "Failed to load player texture!" << std::endl;
@@ -54,20 +54,26 @@ private:
         if (event.type == sf::Event::KeyPressed) {
             switch (event.key.code) {
                 case sf::Keyboard::Space:
+                std::cout << "Regenerating " << i << std::endl;
                     tileMap.generateTileMap();
-                    player.setPosition(CENTRE_X, findPlayerStartingRow(tileMap) * tileHeight);
+                    player.setPosition(mapCentreX, findPlayerStartingRow(tileMap) * tileHeight);
+                    i++;
                     break;
                 case sf::Keyboard::Z:
+                    std::cout << "increasing viewport" << std::endl;
                     viewportCols *= 1.1;
                     viewportRows *= 1.1;
                     tileWidth = SCREEN_WIDTH / viewportCols;
                     tileHeight = SCREEN_HEIGHT / viewportRows;
+                    player.setPosition(player.getPosition().x, findPlayerStartingRow(tileMap) * tileHeight);
                     break;
                 case sf::Keyboard::X:
+                    std::cout << "decreasing viewport" << std::endl;
                     viewportCols *= 0.9;
                     viewportRows *= 0.9;
-                    tileWidth = SCREEN_WIDTH / viewportCols;
+                    tileWidth  = SCREEN_WIDTH / viewportCols;
                     tileHeight = SCREEN_HEIGHT / viewportRows;
+                    player.setPosition(player.getPosition().x, findPlayerStartingRow(tileMap) * tileHeight);
                     break;
                 case sf::Keyboard::Left:
                     xOffset--;
@@ -99,41 +105,48 @@ private:
     }
 
     void renderTileMap() {
-        int viewportRowBegin = (player.getArrayPosition().y - viewportCols / 2) + yOffset;
-        int viewportRowEnd = viewportRowBegin + viewportRows;
-        int viewportColBegin = (player.getArrayPosition().x - viewportRows / 2) + xOffset;
-        int viewportColEnd = viewportColBegin + viewportCols;
+        // Calculate the starting row and column indices for rendering tiles
+        int startRow = player.getArrayPosition().y - (viewportRows >> 1) + yOffset;
+        int startCol = player.getArrayPosition().x - (viewportCols >> 1) + xOffset;
 
-        for (int i = 0, currentRow = viewportRowBegin; i < viewportRowEnd; ++i, ++currentRow) {
-            for (int j = 0, currentCol = viewportColBegin; j < viewportColEnd; ++j, ++currentCol) {
-                sf::RectangleShape tile(sf::Vector2f(tileWidth, tileHeight));
-                tile.setPosition(j * tileWidth, i * tileHeight);
+        // Calculate the ending row and column indices
+        int endRow = startRow + viewportRows;
+        int endCol = startCol + viewportCols;
 
-                switch (tileMap[currentRow][currentCol]) {
-                    case SKY:
-                        tile.setFillColor(SKY_COLOR);
-                        break;
-                    case GRASS:
-                        tile.setFillColor(GRASS_COLOR);
-                        break;
-                    case DIRT:
-                        tile.setFillColor(DIRT_COLOR);
-                        break;
-                    case STONE:
-                        tile.setFillColor(STONE_COLOR);
-                        break;
-                    default:
-                        break;
+        // Loop through the viewport and render tiles
+        for (int i = 0, row = startRow; row < endRow; ++i, ++row) {
+            for (int j = 0, col = startCol; col < endCol; ++j, ++col) {
+                // Check if the current row and column are within bounds of the tile map
+                if (row >= 0 && row < mapRows && col >= 0 && col < mapCols) {
+                    sf::RectangleShape tile(sf::Vector2f(tileWidth, tileHeight));
+                    tile.setPosition(j * tileWidth, i * tileHeight);
+                    
+                    switch (tileMap[row][col]) {
+                        case SKY:
+                            tile.setFillColor(SKY_COLOR);
+                            break;
+                        case GRASS:
+                            tile.setFillColor(GRASS_COLOR);
+                            break;
+                        case DIRT:
+                            tile.setFillColor(DIRT_COLOR);
+                            break;
+                        case STONE:
+                            tile.setFillColor(STONE_COLOR);
+                            break;
+                        default:
+                            break;
+                    }
+                    window.draw(tile);
                 }
-                window.draw(tile);
             }
         }
     }
 
     int findPlayerStartingRow(TileMap& tileMap) {
         for (int i = 0; i < mapRows; ++i) {
-            if (tileMap[i][centreCol] != SKY) // Use getTile to access elements
-                return i;
+            if (tileMap[i][mapCentreCol] != SKY) // Use getTile to access elements
+                return i-1;
         }
         return -1; // If no suitable row is found
     }

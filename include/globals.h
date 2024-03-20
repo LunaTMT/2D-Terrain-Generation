@@ -6,28 +6,39 @@
 #include <SFML/Graphics.hpp>
 
 // Constants
-const unsigned int SCREEN_WIDTH = 800;
-const unsigned int SCREEN_HEIGHT = 600;
+const float SCREEN_WIDTH = 800.f;
+const float SCREEN_HEIGHT = 600.f;
 
-const float CENTRE_X = SCREEN_WIDTH >> 1;
-const float CENTRE_Y = SCREEN_HEIGHT >> 1;
+const float SCREEN_CENTRE_X = SCREEN_WIDTH / 2;
+const float SCREEN_CENTRE_Y = SCREEN_HEIGHT / 2;
+
+
+
+// Variable definitions
+inline int viewportCols = 32;
+inline int viewportRows = 24;
+
+inline float tileWidth = SCREEN_WIDTH / viewportCols;
+inline float tileHeight = SCREEN_HEIGHT / viewportRows;
+
+inline int xOffset = 0;
+inline int yOffset = 0;
+
+inline int i = 0;
+
 
 // Tile map dimensions
 const int mapRows = 1200;
 const int mapCols = 4200;
 
-const int centreRow = mapRows >> 1;
-const int centreCol = mapCols >> 1;
+const int mapCentreRow = mapRows >> 1;
+const int mapCentreCol = mapCols >> 1;
 
-// Variable definitions
-inline int viewportCols = 32;
-inline int viewportRows = 24;
-inline float tileWidth = SCREEN_WIDTH / viewportCols;
-inline float tileHeight = SCREEN_HEIGHT / viewportRows;
-inline int xOffset = 0;
-inline int yOffset = 0;
+const int mapCentreX = mapCentreCol * tileHeight;
+const int mapCentreY = mapCentreRow * tileWidth;
 
-inline int i = 0;
+
+
 
 // Colours
 const sf::Color SKY_COLOR(135, 206, 250);    // Sky Blue

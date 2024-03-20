@@ -28,6 +28,8 @@ sf::Vector2f Player::getPosition() const {
 }
 
 sf::Vector2f Player::getArrayPosition() const {
+    // .x - col
+    // .y - row
     return sf::Vector2(position.x / tileWidth, position.y / tileHeight);
 }
 
@@ -35,7 +37,7 @@ sf::Vector2f Player::getArrayPosition() const {
 
 void Player::draw(sf::RenderWindow& window) {
     sf::CircleShape playerShape(10.f); // Example player shape
-    playerShape.setPosition(position);
+    playerShape.setPosition(SCREEN_CENTRE_X, SCREEN_CENTRE_Y);
     playerShape.setFillColor(sf::Color::Red); // Set player color
     window.draw(playerShape);
 }
