@@ -24,6 +24,10 @@ inline int viewportCols = 32;
 inline int viewportRows = 24;
 inline float tileWidth = SCREEN_WIDTH / viewportCols;
 inline float tileHeight = SCREEN_HEIGHT / viewportRows;
+inline int xOffset = 0;
+inline int yOffset = 0;
+
+inline int i = 0;
 
 // Colours
 const sf::Color SKY_COLOR(135, 206, 250);    // Sky Blue

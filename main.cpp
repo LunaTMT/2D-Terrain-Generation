@@ -3,102 +3,107 @@
 #include <cmath>
 
 #include <unordered_map>
-// Include the Perlin noise header
 #include "globals.h"
 #include "player.h"
 #include "tileMap.h"
 
-
-int findPlayerStartingRow(TileMap& tileMap);
-
-int main() {
-    sf::RenderWindow window(sf::VideoMode(SCREEN_WIDTH, SCREEN_HEIGHT), "Flat 2D World Generation");
-    window.setFramerateLimit(60);
-
-    // Load player texture
-    sf::Texture playerTexture;
-    if (!playerTexture.loadFromFile("Assets/textures/player.png")) {
-        std::cerr << "Failed to load player texture!" << std::endl;
-        return 1;
+class Game {
+public:
+    Game() : window(sf::VideoMode(SCREEN_WIDTH, SCREEN_HEIGHT), "Flat 2D World Generation"),
+             playerTexture(),
+             tileMap(mapRows, mapCols),
+             player(CENTRE_X, findPlayerStartingRow(tileMap) * tileHeight) {
+        window.setFramerateLimit(60);
+        if (!playerTexture.loadFromFile("Assets/textures/player.png")) {
+            std::cerr << "Failed to load player texture!" << std::endl;
+            std::exit(1);
+        }
     }
 
+    void run() {
+        sf::Clock clock;
+        while (window.isOpen()) {
+            sf::Time elapsedTime = clock.restart();
+            float deltaTime = elapsedTime.asSeconds();
 
-    //The following 2D array is dynamically created on the heap for large array sizes
-    
-    TileMap tileMap(mapRows, mapCols);
-    
+            handleEvents();
+            update(deltaTime);
+            render();
+        }
+    }
+
+private:
+    sf::RenderWindow window;
+    sf::Texture playerTexture;
+    TileMap tileMap;
+    Player player;
     int xOffset = 0;
     int yOffset = 0;
 
-    int i = 0;
-    // Initialize player
-    
-    Player player(CENTRE_X, findPlayerStartingRow(tileMap) * tileHeight); // Initialize player at position (0, 0)
-
-
-    sf::Clock clock;
-    float deltaTime = 0.0f;
-
-    while (window.isOpen()) {
-
-        sf::Time elapsedTime = clock.restart();
-        deltaTime = elapsedTime.asSeconds();
-
+    void handleEvents() {
         sf::Event event;
         while (window.pollEvent(event)) {
             if (event.type == sf::Event::Closed)
                 window.close();
-            else if (event.type == sf::Event::KeyPressed) {
+            else
+                handleEvent(event);
+        }
+    }
 
-                if (event.key.code == sf::Keyboard::Space) {
-                    tileMap.generateTileMap(); 
-                    std::cout << "Generating new " << i << std::endl;
-                    i++;
-
-                } else if (event.key.code == sf::Keyboard::Z) {
+    void handleEvent(const sf::Event& event) {
+        if (event.type == sf::Event::KeyPressed) {
+            switch (event.key.code) {
+                case sf::Keyboard::Space:
+                    tileMap.generateTileMap();
+                    player.setPosition(CENTRE_X, findPlayerStartingRow(tileMap) * tileHeight);
+                    break;
+                case sf::Keyboard::Z:
                     viewportCols *= 1.1;
                     viewportRows *= 1.1;
                     tileWidth = SCREEN_WIDTH / viewportCols;
                     tileHeight = SCREEN_HEIGHT / viewportRows;
-                    std::cout << "Increase " << i << std::endl;
-
-                } else if (event.key.code == sf::Keyboard::X) {
+                    break;
+                case sf::Keyboard::X:
                     viewportCols *= 0.9;
                     viewportRows *= 0.9;
                     tileWidth = SCREEN_WIDTH / viewportCols;
                     tileHeight = SCREEN_HEIGHT / viewportRows;
-                    i++;
-                    std::cout << "Decrease " << i << std::endl;
-
-                } else if (event.key.code == sf::Keyboard::Left){
-                    //player.moveLeft(); 
-                    xOffset--; // Decrement xOffset when moving left
-                } else if (event.key.code == sf::Keyboard::Right){
-                    //player.moveRight(); 
-                    xOffset++; // Increment xOffset when moving right
-                } else if (event.key.code == sf::Keyboard::Down){
-                    //player.moveDown(); 
-                    yOffset++; // Increment yOffset when moving down
-                } else if (event.key.code == sf::Keyboard::Up){
-                    //player.moveUp(); 
-                    yOffset--; // Decrement yOffset when moving up
-                }
+                    break;
+                case sf::Keyboard::Left:
+                    xOffset--;
+                    break;
+                case sf::Keyboard::Right:
+                    xOffset++;
+                    break;
+                case sf::Keyboard::Down:
+                    yOffset++;
+                    break;
+                case sf::Keyboard::Up:
+                    yOffset--;
+                    break;
+                default:
+                    break;
             }
         }
+    }
 
-        window.clear();
-
-        // Update player position
+    void update(float deltaTime) {
         player.update(deltaTime);
+    }
 
-        // Calculate new offsets to keep player in the center
-        int viewportRowBegin = player.getArrayPosition().y - viewportCols / 2;
+    void render() {
+        window.clear();
+        renderTileMap();
+        player.draw(window);
+        window.display();
+    }
+
+    void renderTileMap() {
+        int viewportRowBegin = (player.getArrayPosition().y - viewportCols / 2) + yOffset;
         int viewportRowEnd = viewportRowBegin + viewportRows;
-
-        int viewportColBegin = player.getArrayPosition().x - viewportRows / 2;
+        int viewportColBegin = (player.getArrayPosition().x - viewportRows / 2) + xOffset;
         int viewportColEnd = viewportColBegin + viewportCols;
 
-        // Render Tilemap
         for (int i = 0, currentRow = viewportRowBegin; i < viewportRowEnd; ++i, ++currentRow) {
             for (int j = 0, currentCol = viewportColBegin; j < viewportColEnd; ++j, ++currentCol) {
                 sf::RectangleShape tile(sf::Vector2f(tileWidth, tileHeight));
@@ -123,21 +128,19 @@ int main() {
                 window.draw(tile);
             }
         }
-
-        player.draw(window);
-
-        window.display();
     }
 
+    int findPlayerStartingRow(TileMap& tileMap) {
+        for (int i = 0; i < mapRows; ++i) {
+            if (tileMap[i][centreCol] != SKY) // Use getTile to access elements
+                return i;
+        }
+        return -1; // If no suitable row is found
+    }
+};
+
+int main() {
+    Game game;
+    game.run();
     return 0;
 }
-
-
-int findPlayerStartingRow(TileMap& tileMap){
-for (int i = 0; i < mapRows; ++i){
-    if (tileMap[i][centreCol] != SKY) // Use getTile to access elements
-        return i;
-}
-return -1; // If no suitable row is found
-}
-
