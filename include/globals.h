@@ -1,3 +1,5 @@
+// In globals.h
+
 #ifndef CONSTANTS_H
 #define CONSTANTS_H
 
@@ -16,6 +18,12 @@ const int mapCols = 4200;
 
 const int centreRow = mapRows >> 1;
 const int centreCol = mapCols >> 1;
+
+// Variable definitions
+inline int viewportCols = 32;
+inline int viewportRows = 24;
+inline float tileWidth = SCREEN_WIDTH / viewportCols;
+inline float tileHeight = SCREEN_HEIGHT / viewportRows;
 
 // Colours
 const sf::Color SKY_COLOR(135, 206, 250);    // Sky Blue

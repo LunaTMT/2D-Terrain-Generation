@@ -22,6 +22,7 @@ public:
     void setPosition(float x, float y);
 
     sf::Vector2f getPosition() const;
+    sf::Vector2f getArrayPosition() const;
 
     void draw(sf::RenderWindow& window);
 

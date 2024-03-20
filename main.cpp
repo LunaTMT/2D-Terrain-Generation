@@ -27,20 +27,10 @@ int main() {
     
     TileMap tileMap(mapRows, mapCols);
     
-
-    // Viewport view
-    int viewportCols = 32;
-    int viewportRows = 24;
-
-    float tileWidth  = SCREEN_WIDTH / viewportCols;
-    float tileHeight = SCREEN_HEIGHT / viewportRows;
-
     int xOffset = 0;
     int yOffset = 0;
 
     int i = 0;
-
-
     // Initialize player
     
     Player player(CENTRE_X, findPlayerStartingRow(tileMap) * tileHeight); // Initialize player at position (0, 0)
@@ -79,14 +69,19 @@ int main() {
                     tileHeight = SCREEN_HEIGHT / viewportRows;
                     i++;
                     std::cout << "Decrease " << i << std::endl;
+
                 } else if (event.key.code == sf::Keyboard::Left){
-                    player.moveLeft(); // You should have a method in your Player class to handle movement
+                    //player.moveLeft(); 
+                    xOffset--; // Decrement xOffset when moving left
                 } else if (event.key.code == sf::Keyboard::Right){
-                    player.moveRight(); // You should have a method in your Player class to handle movement
+                    //player.moveRight(); 
+                    xOffset++; // Increment xOffset when moving right
                 } else if (event.key.code == sf::Keyboard::Down){
-                    player.moveDown(); // You should have a method in your Player class to handle movement
+                    //player.moveDown(); 
+                    yOffset++; // Increment yOffset when moving down
                 } else if (event.key.code == sf::Keyboard::Up){
-                    player.moveUp(); // You should have a method in your Player class to handle movement
+                    //player.moveUp(); 
+                    yOffset--; // Decrement yOffset when moving up
                 }
             }
         }
@@ -97,17 +92,19 @@ int main() {
         player.update(deltaTime);
 
         // Calculate new offsets to keep player in the center
-        xOffset = (player.getPosition().x / tileWidth) - viewportCols / 2;
-        yOffset = (player.getPosition().y / tileHeight) - viewportRows / 2;
+        int viewportRowBegin = player.getArrayPosition().y - viewportCols / 2;
+        int viewportRowEnd = viewportRowBegin + viewportRows;
 
-    
+        int viewportColBegin = player.getArrayPosition().x - viewportRows / 2;
+        int viewportColEnd = viewportColBegin + viewportCols;
+
         // Render Tilemap
-        for (int i = 0, currentRow = yOffset; i < viewportRows; ++i, ++currentRow) {
-            for (int j = 0, currentCol = xOffset; j < viewportCols; ++j, ++currentCol) {
+        for (int i = 0, currentRow = viewportRowBegin; i < viewportRowEnd; ++i, ++currentRow) {
+            for (int j = 0, currentCol = viewportColBegin; j < viewportColEnd; ++j, ++currentCol) {
                 sf::RectangleShape tile(sf::Vector2f(tileWidth, tileHeight));
                 tile.setPosition(j * tileWidth, i * tileHeight);
 
-                switch (tileMap.getTile(currentRow, currentCol)) {
+                switch (tileMap[currentRow][currentCol]) {
                     case SKY:
                         tile.setFillColor(SKY_COLOR);
                         break;
@@ -138,7 +135,7 @@ int main() {
 
 int findPlayerStartingRow(TileMap& tileMap){
 for (int i = 0; i < mapRows; ++i){
-    if (tileMap.getTile(i, centreCol) != SKY) // Use getTile to access elements
+    if (tileMap[i][centreCol] != SKY) // Use getTile to access elements
         return i;
 }
 return -1; // If no suitable row is found

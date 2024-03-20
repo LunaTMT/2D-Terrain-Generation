@@ -29,7 +29,7 @@ public:
     void generateTileMap();
 
     // Operator overloading for accessing map as 2D array
-    //int* operator[](int row) const;
+    int* operator[](int row) const;
 };
 
 #endif // TILEMAP_H

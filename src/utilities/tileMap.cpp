@@ -81,6 +81,6 @@ void TileMap::generateTileMap() {
 }
 
 // Operator overloading for accessing map as 2D array
-//int* TileMap::operator[](int row) const {
-//    return map[row];
-//}
+int* TileMap::operator[](int row) const {
+    return map[row];
+}

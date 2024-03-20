@@ -27,6 +27,12 @@ sf::Vector2f Player::getPosition() const {
     return position;
 }
 
+sf::Vector2f Player::getArrayPosition() const {
+    return sf::Vector2(position.x / tileWidth, position.y / tileHeight);
+}
+
+
+
 void Player::draw(sf::RenderWindow& window) {
     sf::CircleShape playerShape(10.f); // Example player shape
     playerShape.setPosition(position);
