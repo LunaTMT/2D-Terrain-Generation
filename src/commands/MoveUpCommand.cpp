@@ -2,5 +2,5 @@
 #include "player.h" 
 
 void MoveUpCommand::execute(Player& player) {
-    player.moveUp();
+    player.setMovingUp(true);
 }

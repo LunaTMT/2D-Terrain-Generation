@@ -9,9 +9,11 @@
 const float SCREEN_WIDTH = 800.f;
 const float SCREEN_HEIGHT = 600.f;
 
+const sf::Vector2f SCREEN_SIZE(SCREEN_WIDTH, SCREEN_HEIGHT);
+
+
 const float SCREEN_CENTRE_X = SCREEN_WIDTH / 2;
 const float SCREEN_CENTRE_Y = SCREEN_HEIGHT / 2;
-
 
 
 // Variable definitions

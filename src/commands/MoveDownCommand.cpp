@@ -2,5 +2,5 @@
 #include "player.h" 
 
 void MoveDownCommand::execute(Player& player) {
-    player.moveDown();
+    player.setMovingDown(true);
 }

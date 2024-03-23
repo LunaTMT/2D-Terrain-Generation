@@ -10,6 +10,12 @@ private:
     sf::Vector2f velocity;
     sf::Vector2f acceleration;
 
+    bool movingLeft = false;
+    bool movingRight = false;
+    bool movingUp = false;
+    bool movingDown = false;
+    
+    const float movement_velocity = 200.0f;
     const float gravity = 0.2f; // Adjust gravity strength as needed
 
 public:
@@ -26,13 +32,13 @@ public:
 
     void draw(sf::RenderWindow& window);
 
-    void moveLeft();
+    void setMovingLeft(bool moveLeft);
 
-    void moveRight();
+    void setMovingRight(bool moveRight);
 
-    void moveUp();
+    void setMovingUp(bool moveUp);
 
-    void moveDown();
+    void setMovingDown(bool moveDown);
 };
 
 #endif // PLAYER_H

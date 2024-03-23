@@ -84,3 +84,4 @@ void TileMap::generateTileMap() {
 int* TileMap::operator[](int row) const {
     return map[row];
 }
+

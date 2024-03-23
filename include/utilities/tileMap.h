@@ -28,6 +28,8 @@ public:
     // Generate tile map function
     void generateTileMap();
 
+
+
     // Operator overloading for accessing map as 2D array
     int* operator[](int row) const;
 };
