@@ -28,7 +28,7 @@ public:
     // Generate tile map function
     void generateTileMap();
 
-
+    int countNeighboursThatAreWall(int i, int j);
 
     // Operator overloading for accessing map as 2D array
     int* operator[](int row) const;

@@ -52,7 +52,8 @@ enum Terrain {
     SKY,
     GRASS,
     DIRT,
-    STONE
+    STONE,
+    EMPTY
 };
 
 #endif // CONSTANTS_H

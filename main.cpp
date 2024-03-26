@@ -53,7 +53,6 @@ private:
     sf::View view;
 
 
-    
 
     std::unordered_map<sf::Keyboard::Key, std::shared_ptr<ICommand>> commands = {
         {sf::Keyboard::Left,  std::make_shared<MoveLeftCommand>()},
@@ -81,21 +80,21 @@ private:
         }
     }
 
-void handleKeyReleased(sf::Keyboard::Key key) {
-    if (key == sf::Keyboard::Left) {
-        player.setMovingLeft(false); // Stop moving left
-    } else if (key == sf::Keyboard::Right) {
-        player.setMovingRight(false); // Stop moving right
-    } else if (key == sf::Keyboard::Up) {
-        player.setMovingUp(false);
-    } else if (key == sf::Keyboard::Down) {
-        player.setMovingDown(false);
-    } else if (key == sf::Keyboard::Z) {
-        view.zoom(0.9f);
-    } else if (key == sf::Keyboard::X) {
-        view.zoom(1.1f);
+    void handleKeyReleased(sf::Keyboard::Key key) {
+        if (key == sf::Keyboard::Left) {
+            player.setMovingLeft(false); // Stop moving left
+        } else if (key == sf::Keyboard::Right) {
+            player.setMovingRight(false); // Stop moving right
+        } else if (key == sf::Keyboard::Up) {
+            player.setMovingUp(false);
+        } else if (key == sf::Keyboard::Down) {
+            player.setMovingDown(false);
+        } else if (key == sf::Keyboard::Z) {
+            view.zoom(0.9f);
+        } else if (key == sf::Keyboard::X) {
+            view.zoom(1.1f);
+        }
     }
-}
 
 
 
@@ -108,7 +107,6 @@ void handleKeyReleased(sf::Keyboard::Key key) {
 
     void update(float deltaTime) {
         player.update(deltaTime);
-        // Update camera position to follow the player
 
         view.setCenter(player.getPosition());
         window.setView(view);
@@ -180,8 +178,6 @@ void handleKeyReleased(sf::Keyboard::Key key) {
         // Reset the view to default
         window.setView(window.getDefaultView());
     }
-
-
 
 
     int findPlayerStartingRow(TileMap& tileMap) {

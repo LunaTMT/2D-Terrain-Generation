@@ -1,4 +1,7 @@
 #include "tileMap.h"
+#include <random>
+#include <iostream>
+#include <string>
 
 // Constructor
 TileMap::TileMap(int numRows, int numCols) : rows(numRows), cols(numCols) {
@@ -54,9 +57,12 @@ void TileMap::generateTileMap() {
     const siv::PerlinNoise::seed_type seed = dist(rng);
     const siv::PerlinNoise perlin(seed);
 
+    // Define the range for random height variation
+    //std::uniform_int_distribution<> distr(10, 15);
+
     // Generate terrain
     for (int j = 0; j < cols; ++j) {
-        //Gets the noise value for col height
+        // Gets the noise value for col height
         float height = 0.f;
         for (size_t k = 0; k < frequencies.size(); ++k) {
             float perlinValue = perlin.noise1D_01(static_cast<float>(j) * frequencies[k]) * amplitudes[k];
@@ -71,17 +77,67 @@ void TileMap::generateTileMap() {
                 map[i][j] = SKY;
             } else if (diff <= 0) {
                 map[i][j] = GRASS;
-            } else if (diff <= 10) {
+            } else if (diff <=  10){    //distr(rng)) { // Use rng instead of eng
                 map[i][j] = DIRT;
             } else {
                 map[i][j] = STONE;
             }
         }
     }
+
+    // Generate cave noise
+    for (int i = 100; i < rows; ++i) {
+        for (int j = 0; j < cols; ++j) {
+            float perlinValue = 0.f;
+
+            
+            perlinValue = perlin.noise2D_01(static_cast<float>(i), static_cast<float>(j));
+            perlinValue = (perlinValue >= 0.5)? 1 : 0;
+            //std::cout << "new " << std::to_string(perlinValue) << std::endl;
+
+            if (perlinValue == 1){
+                map[i][j] = EMPTY;
+            }
+        }
+    }
+
+    //Cellular automata 4-5 pass rule
+    // In this instance we will consider a WALL to come under the STONE enumeration type
+    for (int k = 0; k < 4; ++k){
+        
+        for (int i = 100; i < rows; ++i){
+            for (int j = 0; j < cols; ++j){
+                
+                if (countNeighboursThatAreWall(i, j) >= 5){
+                    map[i][j] = STONE;
+                } else {
+                    map[i][j] = EMPTY;
+                }
+        
+            }
+        }
+    }
+}
+
+
+int TileMap::countNeighboursThatAreWall(int row, int col) {
+    int count = 0;
+
+    for (int i = row - 1; i <= row + 1; ++i) {
+        for (int j = col - 1; j <= col + 1; ++j) {
+            // Check if the neighbor tile is a wall (STONE)
+            if (getTile(i, j) == STONE) {
+                ++count;
+            }
+        }
+    }
+
+    return count;
 }
 
 // Operator overloading for accessing map as 2D array
 int* TileMap::operator[](int row) const {
     return map[row];
 }
+
 
