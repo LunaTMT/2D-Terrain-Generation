@@ -6,6 +6,20 @@ Player::Player(float x, float y) : velocity(0.f, 0.f), acceleration(0.f, 0.f),
     setPosition(x, y); // Use setPosition method from IGameActor to set initial position
 }
 
+void Player::handleKeyPressed(sf::Keyboard::Key key) {
+    auto it = commands.find(key);
+    if (it != commands.end()) {
+        it->second->execute(*this);
+    }
+}
+
+ void Player::handleKeyReleased(sf::Keyboard::Key key) {
+    auto it = releaseCommands.find(key);
+    if (it != releaseCommands.end()) {
+        it->second->execute(*this);
+    }
+ }
+
 void Player::update(float dt) {
     // Apply movement based on flags
     if (movingLeft) {

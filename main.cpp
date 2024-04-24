@@ -21,15 +21,13 @@ public:
             view()
     {
         window.setFramerateLimit(60);
-        view.setSize(SCREEN_SIZE); // Set view size here
+        view.setSize(SCREEN_SIZE);
 
         if (!playerTexture.loadFromFile("Assets/textures/player.png")) {
             std::cerr << "Failed to load player texture!" << std::endl;
             std::exit(1);
         }
     }
-
-
 
     void run() {
         sf::Clock clock;
@@ -51,22 +49,6 @@ private:
     sf::View view;
 
 
-
-    std::unordered_map<sf::Keyboard::Key, std::shared_ptr<ICommand>> commands = {
-        {sf::Keyboard::Left,  std::make_shared<MoveLeftCommand>()},
-        {sf::Keyboard::Right, std::make_shared<MoveRightCommand>()},
-        {sf::Keyboard::Up,    std::make_shared<MoveUpCommand>()},
-        {sf::Keyboard::Down,  std::make_shared<MoveDownCommand>()}
-    };
-    
-    std::unordered_map<sf::Keyboard::Key, std::shared_ptr<ICommand>> releaseCommands {
-        {sf::Keyboard::Left,  std::make_shared<StopMoveLeftCommand>()},
-        {sf::Keyboard::Right, std::make_shared<StopMoveRightCommand>()},
-        {sf::Keyboard::Up,    std::make_shared<StopMoveUpCommand>()},
-        {sf::Keyboard::Down,  std::make_shared<StopMoveDownCommand>()}
-    };
-
-
     void handleEvents() {
         sf::Event event;
         while (window.pollEvent(event)) {
@@ -80,34 +62,20 @@ private:
     }
 
     void handleKeyPressed(sf::Keyboard::Key key) {
-        auto it = commands.find(key);
-        if (it != commands.end()) {
-            it->second->execute(player);
-        }
+        player.handleKeyPressed(key);
     }
 
     void handleKeyReleased(sf::Keyboard::Key key) {
-        auto it = releaseCommands.find(key);
-        if (it != releaseCommands.end()) {
-            it->second->execute(player);
-        } else {
-            if (key == sf::Keyboard::Z) {
-                view.zoom(0.9f);
-            } else if (key == sf::Keyboard::X) {
-                view.zoom(1.1f);
-            }
+        player.handleKeyReleased(key);
+
+        if (key == sf::Keyboard::Z) {
+            view.zoom(0.9f);
+        } else if (key == sf::Keyboard::X) {
+            view.zoom(1.1f);
         }
     }
 
 
-
-
-    void handleEvent(const sf::Event& event) {
-        auto it = commands.find(event.key.code);
-        if (it != commands.end()) {
-            it->second->execute(player);
-        }
-    }
 
     void update(float deltaTime) {
         player.update(deltaTime);
