@@ -9,15 +9,8 @@
 #include "tileMap.h"
 
 #include "ICommand.h"
-#include "MoveLeftCommand.h"
-#include "MoveRightCommand.h"
-#include "MoveUpCommand.h"
-#include "MoveDownCommand.h"
-
-#include "StopMoveLeftCommand.h"
-#include "StopMoveRightCommand.h"
-#include "StopMoveUpCommand.h"
-#include "StopMoveDownCommand.h"
+#include "MovementCommands.h"
+#include "StopMovementCommands.h"
 
 class Game {
 public:

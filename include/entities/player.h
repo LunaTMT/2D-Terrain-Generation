@@ -2,11 +2,11 @@
 #define PLAYER_H
 
 #include <SFML/Graphics.hpp>
+#include "IGameActor.h"
 #include "globals.h"
 
-class Player {
+class Player : public IGameActor {
 private:
-    sf::Vector2f position;
     sf::Vector2f velocity;
     sf::Vector2f acceleration;
 
@@ -16,29 +16,24 @@ private:
     bool movingDown = false;
     
     const float movement_velocity = 200.0f;
-    const float gravity = 0.2f; // Adjust gravity strength as needed
+    const float gravity = 0.2f; 
 
 public:
     Player(float x, float y);
 
-    void update(float dt);
+    void update(float dt) override;
 
     void applyForce(sf::Vector2f force);
 
-    void setPosition(float x, float y);
-
-    sf::Vector2f getPosition() const;
     sf::Vector2f getArrayPosition() const;
 
-    void draw(sf::RenderWindow& window);
+    void draw(sf::RenderWindow& window) override;
 
-    void setMovingLeft(bool moveLeft);
-
-    void setMovingRight(bool moveRight);
-
-    void setMovingUp(bool moveUp);
-
-    void setMovingDown(bool moveDown);
+    // Override the methods from the base class
+    void setMovingLeft(bool moveLeft) override;
+    void setMovingRight(bool moveRight) override;
+    void setMovingUp(bool moveUp) override;
+    void setMovingDown(bool moveDown) override;
 };
 
 #endif // PLAYER_H

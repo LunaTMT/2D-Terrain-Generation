@@ -1,8 +1,10 @@
 #include "player.h"
 #include <iostream>
 
-Player::Player(float x, float y) : position(x, y), velocity(0.f, 0.f), acceleration(0.f, 0.f), 
-                                     movingLeft(false), movingRight(false), movingUp(false), movingDown(false) {}
+Player::Player(float x, float y) : velocity(0.f, 0.f), acceleration(0.f, 0.f), 
+                                     movingLeft(false), movingRight(false), movingUp(false), movingDown(false) {
+    setPosition(x, y); // Use setPosition method from IGameActor to set initial position
+}
 
 void Player::update(float dt) {
     // Apply movement based on flags
@@ -30,15 +32,6 @@ void Player::update(float dt) {
 
 void Player::applyForce(sf::Vector2f force) {
     acceleration += force;
-}
-
-void Player::setPosition(float x, float y) {
-    position.x = x;
-    position.y = y;
-}
-
-sf::Vector2f Player::getPosition() const {
-    return position;
 }
 
 sf::Vector2f Player::getArrayPosition() const {
