@@ -38,8 +38,8 @@ private:
 public:
     Player(float x, float y);
 
-    void handleKeyPressed(sf::Keyboard::Key key);
-    void handleKeyReleased(sf::Keyboard::Key key);
+    void handleKeyPressed(sf::Keyboard::Key key) override;
+    void handleKeyReleased(sf::Keyboard::Key key) override;
 
 
     void update(float dt) override;

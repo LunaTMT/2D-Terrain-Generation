@@ -3,7 +3,6 @@
 
 #include <SFML/Graphics.hpp>
 
-
 class IGameActor {
 protected:
     sf::Vector2f position;
@@ -24,11 +23,14 @@ public:
 
     virtual void draw(sf::RenderWindow& window) = 0;
 
-    // Declare these functions as virtual
     virtual void setMovingLeft(bool moveLeft) = 0;
     virtual void setMovingRight(bool moveRight) = 0;
     virtual void setMovingUp(bool moveUp) = 0;
     virtual void setMovingDown(bool moveDown) = 0;
+
+    // New functions for handling key presses and releases
+    virtual void handleKeyPressed(sf::Keyboard::Key key) = 0;
+    virtual void handleKeyReleased(sf::Keyboard::Key key) = 0;
 };
 
 #endif // GAME_ACTOR_H

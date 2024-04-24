@@ -18,7 +18,8 @@ public:
             playerTexture(),
             tileMap(mapRows, mapCols),
             player(mapCentreX, findPlayerStartingRow(tileMap) * tileHeight),
-            view()
+            view(),
+            gameActors()
     {
         window.setFramerateLimit(60);
         view.setSize(SCREEN_SIZE);
@@ -27,6 +28,9 @@ public:
             std::cerr << "Failed to load player texture!" << std::endl;
             std::exit(1);
         }
+
+        // Add player to gameActors vector
+        gameActors.push_back(&player);
     }
 
     void run() {
@@ -47,7 +51,7 @@ private:
     TileMap tileMap;
     Player player;
     sf::View view;
-
+    std::vector<IGameActor*> gameActors;
 
     void handleEvents() {
         sf::Event event;
@@ -62,11 +66,15 @@ private:
     }
 
     void handleKeyPressed(sf::Keyboard::Key key) {
-        player.handleKeyPressed(key);
+        for (IGameActor* actor : gameActors){
+            actor->handleKeyPressed(key);
+        }
     }
 
     void handleKeyReleased(sf::Keyboard::Key key) {
-        player.handleKeyReleased(key);
+        for (IGameActor* actor : gameActors){
+            actor->handleKeyReleased(key);
+        }
 
         if (key == sf::Keyboard::Z) {
             view.zoom(0.9f);
@@ -75,10 +83,10 @@ private:
         }
     }
 
-
-
     void update(float deltaTime) {
-        player.update(deltaTime);
+        for (IGameActor* actor : gameActors){
+            actor->update(deltaTime);
+        }
 
         view.setCenter(player.getPosition());
         window.setView(view);
@@ -87,7 +95,11 @@ private:
     void render() {
         window.clear();
         renderTileMap();
-        player.draw(window);
+
+        for (IGameActor* actor : gameActors){
+            actor->draw(window);
+        }
+
         window.display();
     }
 
@@ -150,7 +162,6 @@ private:
         // Reset the view to default
         window.setView(window.getDefaultView());
     }
-
 
     int findPlayerStartingRow(TileMap& tileMap) {
         for (int i = 0; i < mapRows; ++i) {
