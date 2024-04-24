@@ -7,12 +7,17 @@
 #include "globals.h"
 #include "player.h"
 #include "tileMap.h"
+
 #include "ICommand.h"
 #include "MoveLeftCommand.h"
 #include "MoveRightCommand.h"
 #include "MoveUpCommand.h"
 #include "MoveDownCommand.h"
 
+#include "StopMoveLeftCommand.h"
+#include "StopMoveRightCommand.h"
+#include "StopMoveUpCommand.h"
+#include "StopMoveDownCommand.h"
 
 class Game {
 public:
@@ -60,6 +65,14 @@ private:
         {sf::Keyboard::Up,    std::make_shared<MoveUpCommand>()},
         {sf::Keyboard::Down,  std::make_shared<MoveDownCommand>()}
     };
+    
+    std::unordered_map<sf::Keyboard::Key, std::shared_ptr<ICommand>> releaseCommands {
+        {sf::Keyboard::Left,  std::make_shared<StopMoveLeftCommand>()},
+        {sf::Keyboard::Right, std::make_shared<StopMoveRightCommand>()},
+        {sf::Keyboard::Up,    std::make_shared<StopMoveUpCommand>()},
+        {sf::Keyboard::Down,  std::make_shared<StopMoveDownCommand>()}
+    };
+
 
     void handleEvents() {
         sf::Event event;
@@ -81,20 +94,18 @@ private:
     }
 
     void handleKeyReleased(sf::Keyboard::Key key) {
-        if (key == sf::Keyboard::Left) {
-            player.setMovingLeft(false); // Stop moving left
-        } else if (key == sf::Keyboard::Right) {
-            player.setMovingRight(false); // Stop moving right
-        } else if (key == sf::Keyboard::Up) {
-            player.setMovingUp(false);
-        } else if (key == sf::Keyboard::Down) {
-            player.setMovingDown(false);
-        } else if (key == sf::Keyboard::Z) {
-            view.zoom(0.9f);
-        } else if (key == sf::Keyboard::X) {
-            view.zoom(1.1f);
+        auto it = releaseCommands.find(key);
+        if (it != releaseCommands.end()) {
+            it->second->execute(player);
+        } else {
+            if (key == sf::Keyboard::Z) {
+                view.zoom(0.9f);
+            } else if (key == sf::Keyboard::X) {
+                view.zoom(1.1f);
+            }
         }
     }
+
 
 
 

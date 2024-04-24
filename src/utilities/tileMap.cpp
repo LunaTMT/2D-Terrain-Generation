@@ -86,24 +86,24 @@ void TileMap::generateTileMap() {
     }
 
     // Generate cave noise
+    std::uniform_real_distribution<float> cave_dist(0.0f, 1.0f); // Uniform distribution between 0 and 1
+
+    // Generate cave noise
     for (int i = 100; i < rows; ++i) {
         for (int j = 0; j < cols; ++j) {
-            float perlinValue = 0.f;
+            // Generate a random value between 0 and 1
+            float randomValue = cave_dist(rng);
 
-            
-            perlinValue = perlin.noise2D_01(static_cast<float>(i), static_cast<float>(j));
-            perlinValue = (perlinValue >= 0.5)? 1 : 0;
-            //std::cout << "new " << std::to_string(perlinValue) << std::endl;
-
-            if (perlinValue == 1){
-                map[i][j] = EMPTY;
+            // Adjust the threshold to control the density of the cave
+            if (randomValue < 0.6f) {
+                map[i][j] = EMPTY; // Set as empty if the random value is below the threshold
             }
         }
     }
 
     //Cellular automata 4-5 pass rule
     // In this instance we will consider a WALL to come under the STONE enumeration type
-    for (int k = 0; k < 4; ++k){
+    for (int k = 0; k < 3; ++k){
         
         for (int i = 100; i < rows; ++i){
             for (int j = 0; j < cols; ++j){
