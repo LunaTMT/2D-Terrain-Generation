@@ -43,10 +43,12 @@ public:
 
 
     void update(float dt) override;
+    bool isCollidingWithTerrain(sf::Vector2f nextPosition) const;
 
     void applyForce(sf::Vector2f force);
 
     sf::Vector2f getArrayPosition() const;
+    sf::Vector2f getArrayPosition(float x, float y) const;
 
     void draw(sf::RenderWindow& window) override;
 

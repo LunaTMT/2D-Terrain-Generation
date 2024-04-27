@@ -39,6 +39,8 @@ const int mapCentreCol = mapCols >> 1;
 const int mapCentreX = mapCentreCol * tileHeight;
 const int mapCentreY = mapCentreRow * tileWidth;
 
+const float max_fall_speed = 500.0;
+
 
 
 

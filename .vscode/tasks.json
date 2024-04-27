@@ -13,7 +13,6 @@
                 "src/entities/*.cpp",
                 "src/commands/*.cpp",
                 "src/utilities/*.cpp",
-                //"src/utilities/*.cpp",
                 "-Iinclude",
                 "-Iinclude/entities", 
                 "-Iinclude/utilities",

@@ -1,4 +1,5 @@
 #include "player.h"
+#include <algorithm>
 #include <iostream>
 
 Player::Player(float x, float y) : velocity(0.f, 0.f), acceleration(0.f, 0.f), 
@@ -21,6 +22,9 @@ void Player::handleKeyPressed(sf::Keyboard::Key key) {
  }
 
 void Player::update(float dt) {
+    // Apply gravity
+    acceleration.y = gravity;
+
     // Apply movement based on flags
     if (movingLeft) {
         velocity.x = -movement_velocity; // Adjust the speed as needed
@@ -38,11 +42,30 @@ void Player::update(float dt) {
         velocity.y = 0.0f; // Stop vertical movement if no key is pressed
     }
 
+    // Update velocity based on acceleration
+    velocity += acceleration * dt;
+
+    // Clamp velocity to maximum falling speed
+    velocity.y = std::min(velocity.y, max_fall_speed);
+
     sf::Vector2f movement = velocity * dt;
 
-    // Update position
-    position += movement;
+    // Check for collisions with terrain
+    sf::Vector2f nextPosition = position + movement;
+    if (!isCollidingWithTerrain(nextPosition)) {
+        // Update position if no collision
+        position += movement;
+    } else {
+        // Stop vertical movement if colliding with terrain
+        velocity.y = 0.0f;
+    }
 }
+
+bool Player::isCollidingWithTerrain(sf::Vector2f nextPosition) const {
+    return false;
+}
+
+
 
 void Player::applyForce(sf::Vector2f force) {
     acceleration += force;
@@ -52,6 +75,12 @@ sf::Vector2f Player::getArrayPosition() const {
     // .x - col
     // .y - row
     return sf::Vector2(position.x / tileWidth, position.y / tileHeight);
+}
+
+sf::Vector2f Player::getArrayPosition(float x, float y) const {
+    // .x - col
+    // .y - row
+    return sf::Vector2(x / tileWidth, y / tileHeight);
 }
 
 void Player::draw(sf::RenderWindow& window) {

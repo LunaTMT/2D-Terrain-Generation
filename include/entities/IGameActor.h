@@ -3,9 +3,11 @@
 
 #include <SFML/Graphics.hpp>
 
+
 class IGameActor {
 protected:
     sf::Vector2f position;
+
 
 public:
     virtual ~IGameActor() {}
