@@ -2,10 +2,11 @@
 #include <algorithm>
 #include <iostream>
 
-Player::Player(float x, float y) : velocity(0.f, 0.f), acceleration(0.f, 0.f), 
+Player::Player(float x, float y, Game* game) : IGameActor(game), velocity(0.f, 0.f), acceleration(0.f, 0.f), 
                                      movingLeft(false), movingRight(false), movingUp(false), movingDown(false) {
     setPosition(x, y); // Use setPosition method from IGameActor to set initial position
 }
+
 
 void Player::handleKeyPressed(sf::Keyboard::Key key) {
     auto it = commands.find(key);

@@ -3,14 +3,18 @@
 
 #include <SFML/Graphics.hpp>
 
+class Game;
 
 class IGameActor {
 protected:
     sf::Vector2f position;
-
+    Game* game;
 
 public:
+    IGameActor() : game(nullptr) {}
+
     virtual ~IGameActor() {}
+    IGameActor(Game* gamePtr) : game(gamePtr) {}
 
     virtual void update(float dt) = 0;
 

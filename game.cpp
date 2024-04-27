@@ -3,7 +3,7 @@
 Game::Game() : window(sf::VideoMode(SCREEN_WIDTH, SCREEN_HEIGHT), "Flat 2D World Generation"),
             playerTexture(),
             tileMap(mapRows, mapCols),
-            player(mapCentreX, findPlayerStartingRow(tileMap) * tileHeight),
+            player(mapCentreX, findPlayerStartingRow(tileMap) * tileHeight, this),
             view(),
             gameActors()
 {
