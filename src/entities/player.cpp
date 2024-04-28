@@ -3,7 +3,7 @@
 #include <iostream>
 #include <algorithm>
 #include <iostream>
-#include "/home/taylor/Desktop/Projects/Game Dev/C++/2D-Terrain-Generation/game.h"
+#include "game.h"
 
 
 Player::Player(Game* game) : IGameActor(game) {

@@ -4,7 +4,6 @@
 #include <SFML/Graphics.hpp>
 #include <iostream>
 
-
 class Game; // Forward declaration of Game class
 
 class IGameActor {
