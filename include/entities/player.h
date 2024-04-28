@@ -8,10 +8,9 @@
 #include "MovementCommands.h"
 #include "StopMovementCommands.h"
 
+
 class Player : public IGameActor {
 private:
-    sf::Vector2f velocity;
-    sf::Vector2f acceleration;
     
     std::unordered_map<sf::Keyboard::Key, std::shared_ptr<ICommand>> commands = {
         {sf::Keyboard::Left,  std::make_shared<MoveLeftCommand>()},
@@ -27,36 +26,24 @@ private:
         {sf::Keyboard::Down,  std::make_shared<StopMoveDownCommand>()}
     };
 
-    bool movingLeft = false;
-    bool movingRight = false;
-    bool movingUp = false;
-    bool movingDown = false;
-
     const float movement_velocity = 200.0f;
     const float gravity = 0.2f; 
 
 public:
-    Player(float x, float y, Game* game);
+    Player(Game* game);
 
     void handleKeyPressed(sf::Keyboard::Key key) override;
     void handleKeyReleased(sf::Keyboard::Key key) override;
 
-
     void update(float dt) override;
-    bool isCollidingWithTerrain(sf::Vector2f nextPosition) const;
-
-    void applyForce(sf::Vector2f force);
-
-    sf::Vector2f getArrayPosition() const;
-    sf::Vector2f getArrayPosition(float x, float y) const;
-
     void draw(sf::RenderWindow& window) override;
 
-    // Override the methods from the base class
     void setMovingLeft(bool moveLeft) override;
     void setMovingRight(bool moveRight) override;
     void setMovingUp(bool moveUp) override;
     void setMovingDown(bool moveDown) override;
+
+    int findPlayerStartingY();
 };
 
 #endif // PLAYER_H

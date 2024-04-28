@@ -20,6 +20,14 @@ public:
     Game();
     void run();
 
+    int name = 1;
+    sf::RenderWindow window;
+    sf::Texture playerTexture;
+    TileMap tileMap;
+    Player player;
+    sf::View view;
+    std::vector<IGameActor*> gameActors;
+
 private:
     void handleEvents();
     void handleKeyPressed(sf::Keyboard::Key key);
@@ -27,14 +35,7 @@ private:
     void update(float deltaTime);
     void render();
     void renderTileMap();
-    int findPlayerStartingRow(TileMap& tileMap);
-
-    sf::RenderWindow window;
-    sf::Texture playerTexture;
-    TileMap tileMap;
-    Player player;
-    sf::View view;
-    std::vector<IGameActor*> gameActors;
+    
 };
 #endif // GAME_H
 

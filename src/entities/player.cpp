@@ -1,10 +1,13 @@
 #include "player.h"
+
+#include <iostream>
 #include <algorithm>
 #include <iostream>
+#include "/home/taylor/Desktop/Projects/Game Dev/C++/2D-Terrain-Generation/game.h"
 
-Player::Player(float x, float y, Game* game) : IGameActor(game), velocity(0.f, 0.f), acceleration(0.f, 0.f), 
-                                     movingLeft(false), movingRight(false), movingUp(false), movingDown(false) {
-    setPosition(x, y); // Use setPosition method from IGameActor to set initial position
+
+Player::Player(Game* game) : IGameActor(game) {
+    setPosition(mapCentreX, 1); 
 }
 
 
@@ -15,7 +18,7 @@ void Player::handleKeyPressed(sf::Keyboard::Key key) {
     }
 }
 
- void Player::handleKeyReleased(sf::Keyboard::Key key) {
+void Player::handleKeyReleased(sf::Keyboard::Key key) {
     auto it = releaseCommands.find(key);
     if (it != releaseCommands.end()) {
         it->second->execute(*this);
@@ -50,44 +53,21 @@ void Player::update(float dt) {
     velocity.y = std::min(velocity.y, max_fall_speed);
 
     sf::Vector2f movement = velocity * dt;
-
-    // Check for collisions with terrain
-    sf::Vector2f nextPosition = position + movement;
-    if (!isCollidingWithTerrain(nextPosition)) {
-        // Update position if no collision
+    std::cout << game->name;
+    /*sf::Vector2f nextPosition = tileMap->getArrayPosition(position + movement)
+    
+    if (!tileMap->isCollidingWithTerrain(nextPosition)) {
         position += movement;
     } else {
         // Stop vertical movement if colliding with terrain
         velocity.y = 0.0f;
     }
-}
-
-bool Player::isCollidingWithTerrain(sf::Vector2f nextPosition) const {
-    return false;
-}
-
-
-
-void Player::applyForce(sf::Vector2f force) {
-    acceleration += force;
-}
-
-sf::Vector2f Player::getArrayPosition() const {
-    // .x - col
-    // .y - row
-    return sf::Vector2(position.x / tileWidth, position.y / tileHeight);
-}
-
-sf::Vector2f Player::getArrayPosition(float x, float y) const {
-    // .x - col
-    // .y - row
-    return sf::Vector2(x / tileWidth, y / tileHeight);
+    */
 }
 
 void Player::draw(sf::RenderWindow& window) {
     sf::CircleShape playerShape(10.f); // Example player shape
     playerShape.setPosition(SCREEN_CENTRE_X, SCREEN_CENTRE_Y);
-    //std::cout << position.x - cameraPosition.x<< "  " << position.y - cameraPosition.y << std::endl;
     playerShape.setFillColor(sf::Color::Red); // Set player color
     window.draw(playerShape);
 }
@@ -106,4 +86,12 @@ void Player::setMovingUp(bool moveUp) {
 
 void Player::setMovingDown(bool moveDown) {
     movingDown = moveDown;
+}
+
+int Player::findPlayerStartingY() {
+    for (int i = 0; i < mapRows; ++i) {
+        //if (tileMap->getTile(i, mapCentreCol) != SKY) 
+        return static_cast<int>((i-1) * tileHeight);
+    }
+    return -1; 
 }

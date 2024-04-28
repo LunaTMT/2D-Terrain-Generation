@@ -3,8 +3,12 @@
 
 #include <vector>
 #include <random>
+#include <SFML/System/Vector2.hpp>
+#include <utility>
+
 #include "PerlinNoise.hpp"
 #include "globals.h"
+
 
 class TileMap {
 private:
@@ -24,6 +28,11 @@ public:
 
     // Getter for retrieving the value of a tile at a specific row and column
     int getTile(int row, int col) const;
+
+    bool isCollidingWithTerrain(int row, int col) const;
+
+        std::pair<float, float> getArrayPosition(sf::Vector2f pos) const;
+    
 
     // Generate tile map function
     void generateTileMap();

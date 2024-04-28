@@ -1,9 +1,10 @@
 #include "game.h"
 
+
 Game::Game() : window(sf::VideoMode(SCREEN_WIDTH, SCREEN_HEIGHT), "Flat 2D World Generation"),
             playerTexture(),
             tileMap(mapRows, mapCols),
-            player(mapCentreX, findPlayerStartingRow(tileMap) * tileHeight, this),
+            player(this),
             view(),
             gameActors()
 {
@@ -141,10 +142,3 @@ void Game::renderTileMap() {
     window.setView(window.getDefaultView());
 }
 
-int Game::findPlayerStartingRow(TileMap& tileMap) {
-    for (int i = 0; i < mapRows; ++i) {
-        if (tileMap[i][mapCentreCol] != SKY) // Use getTile to access elements
-            return i-1;
-    }
-    return -1; // If no suitable row is found
-}

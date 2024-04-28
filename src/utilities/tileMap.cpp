@@ -44,6 +44,11 @@ int TileMap::getTile(int row, int col) const {
     }
 }
 
+
+bool TileMap::isCollidingWithTerrain(int row, int col) const {
+    return map[row][col] != 0;
+}
+
 // Generate tile map function
 void TileMap::generateTileMap() {
     // Create multiple Perlin noise layers with different frequencies and amplitudes
