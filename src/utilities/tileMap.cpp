@@ -45,7 +45,16 @@ int TileMap::getTile(int row, int col) const {
 }
 
 
-bool TileMap::isCollidingWithTerrain(int row, int col) const {
+std::pair<int, int> TileMap::getArrayPosition(sf::Vector2f pos) const{
+    const int row = pos.y / mapRows;
+    const int col = pos.x / mapCols;
+    return std::make_pair(row, col);
+}
+
+
+bool TileMap::isCollidingWithTerrain(std::pair<int, int> array_pos) const {
+    int row = array_pos.first;
+    int col = array_pos.second;
     return map[row][col] != 0;
 }
 

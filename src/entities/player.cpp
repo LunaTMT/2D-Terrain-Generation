@@ -1,15 +1,11 @@
 #include "player.h"
-
 #include <iostream>
 #include <algorithm>
-#include <iostream>
 #include "game.h"
-
 
 Player::Player(Game* game) : IGameActor(game) {
     setPosition(mapCentreX, 1); 
 }
-
 
 void Player::handleKeyPressed(sf::Keyboard::Key key) {
     auto it = commands.find(key);
@@ -23,7 +19,7 @@ void Player::handleKeyReleased(sf::Keyboard::Key key) {
     if (it != releaseCommands.end()) {
         it->second->execute(*this);
     }
- }
+}
 
 void Player::update(float dt) {
     // Apply gravity
@@ -53,16 +49,22 @@ void Player::update(float dt) {
     velocity.y = std::min(velocity.y, max_fall_speed);
 
     sf::Vector2f movement = velocity * dt;
-    std::cout << game->name;
-    /*sf::Vector2f nextPosition = tileMap->getArrayPosition(position + movement)
     
-    if (!tileMap->isCollidingWithTerrain(nextPosition)) {
+  
+
+    std::pair<int, int> array_pos = game->tileMap.getArrayPosition(position + movement);
+
+
+    std::cout << array_pos.first << " " << array_pos.second << " " << game->tileMap.isCollidingWithTerrain(array_pos) << std::endl;
+
+
+    if (!game->tileMap.isCollidingWithTerrain(array_pos)) {
         position += movement;
     } else {
         // Stop vertical movement if colliding with terrain
         velocity.y = 0.0f;
     }
-    */
+    
 }
 
 void Player::draw(sf::RenderWindow& window) {
@@ -90,7 +92,8 @@ void Player::setMovingDown(bool moveDown) {
 
 int Player::findPlayerStartingY() {
     for (int i = 0; i < mapRows; ++i) {
-        //if (tileMap->getTile(i, mapCentreCol) != SKY) 
+        // Uncomment and fix this line based on your tile map implementation
+        // if (tileMap->getTile(i, mapCentreCol) != SKY) 
         return static_cast<int>((i-1) * tileHeight);
     }
     return -1; 

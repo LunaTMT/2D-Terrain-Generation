@@ -22,16 +22,19 @@ public:
 
     // Destructor
     ~TileMap();
-
+    int name = 1;
     // Setter for setting a tile value at a specific row and column
     void setTile(int row, int col, int value);
 
     // Getter for retrieving the value of a tile at a specific row and column
     int getTile(int row, int col) const;
+    std::pair<int, int> getArrayPosition(sf::Vector2f pos) const;
+    
+    
+    bool isCollidingWithTerrain(std::pair<int, int> array_pos) const;
+    
 
-    bool isCollidingWithTerrain(int row, int col) const;
-
-        std::pair<float, float> getArrayPosition(sf::Vector2f pos) const;
+    
     
 
     // Generate tile map function

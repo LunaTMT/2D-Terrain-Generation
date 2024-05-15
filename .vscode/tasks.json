@@ -10,6 +10,7 @@
                 "${file}",
                 "-o",
                 "${fileDirname}/${fileBasenameNoExtension}",
+                "game.cpp",
                 "src/entities/*.cpp",
                 "src/commands/*.cpp",
                 "src/utilities/*.cpp",
@@ -19,7 +20,7 @@
                 "-Iinclude/commands",
                 "-lsfml-graphics",
                 "-lsfml-window",
-                "-lsfml-system" //
+                "-lsfml-system"
             ],
             "options": {
                 "cwd": "${fileDirname}"

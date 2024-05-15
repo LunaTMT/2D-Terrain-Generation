@@ -10,7 +10,6 @@
 #include "globals.h"
 #include "player.h"
 #include "tileMap.h"
-
 #include "ICommand.h"
 #include "MovementCommands.h"
 #include "StopMovementCommands.h"
@@ -37,5 +36,6 @@ private:
     void renderTileMap();
     
 };
-#endif // GAME_H
 
+#endif // GAME_H
+    

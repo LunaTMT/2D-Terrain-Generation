@@ -1,6 +1,5 @@
 #include "game.h"
 
-
 Game::Game() : window(sf::VideoMode(SCREEN_WIDTH, SCREEN_HEIGHT), "Flat 2D World Generation"),
             playerTexture(),
             tileMap(mapRows, mapCols),
