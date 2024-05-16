@@ -30,11 +30,14 @@ public:
     int getTile(int row, int col) const;
     std::pair<int, int> getArrayPosition(sf::Vector2f pos) const;
     
+
+    int getPlayerStartingRow() const;
+    
+
     
     bool isCollidingWithTerrain(std::pair<int, int> array_pos) const;
     
 
-    
     
 
     // Generate tile map function

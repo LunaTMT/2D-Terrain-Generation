@@ -4,8 +4,11 @@
 #include "game.h"
 
 Player::Player(Game* game) : IGameActor(game) {
-    setPosition(mapCentreX, 1); 
+    setPosition(mapCentreX, game->tileMap.getPlayerStartingRow() * tileHeight); 
 }
+
+
+    
 
 void Player::handleKeyPressed(sf::Keyboard::Key key) {
     auto it = commands.find(key);
@@ -49,26 +52,22 @@ void Player::update(float dt) {
     velocity.y = std::min(velocity.y, max_fall_speed);
 
     sf::Vector2f movement = velocity * dt;
-    
-  
 
-    std::pair<int, int> array_pos = game->tileMap.getArrayPosition(position + movement);
-
-
-    std::cout << array_pos.first << " " << array_pos.second << " " << game->tileMap.isCollidingWithTerrain(array_pos) << std::endl;
+    std::pair<int, int> array_pos = game->tileMap.getArrayPosition(position); //+ movement);
+    //std::cout << array_pos.first << " " << array_pos.second << " " << game->tileMap.isCollidingWithTerrain(array_pos) << std::endl;
 
 
     if (!game->tileMap.isCollidingWithTerrain(array_pos)) {
         position += movement;
     } else {
-        // Stop vertical movement if colliding with terrain
         velocity.y = 0.0f;
     }
+    
     
 }
 
 void Player::draw(sf::RenderWindow& window) {
-    sf::CircleShape playerShape(10.f); // Example player shape
+    sf::RectangleShape playerShape(sf::Vector2f(tileWidth, tileHeight));
     playerShape.setPosition(SCREEN_CENTRE_X, SCREEN_CENTRE_Y);
     playerShape.setFillColor(sf::Color::Red); // Set player color
     window.draw(playerShape);
@@ -90,11 +89,3 @@ void Player::setMovingDown(bool moveDown) {
     movingDown = moveDown;
 }
 
-int Player::findPlayerStartingY() {
-    for (int i = 0; i < mapRows; ++i) {
-        // Uncomment and fix this line based on your tile map implementation
-        // if (tileMap->getTile(i, mapCentreCol) != SKY) 
-        return static_cast<int>((i-1) * tileHeight);
-    }
-    return -1; 
-}

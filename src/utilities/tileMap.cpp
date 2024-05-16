@@ -46,10 +46,22 @@ int TileMap::getTile(int row, int col) const {
 
 
 std::pair<int, int> TileMap::getArrayPosition(sf::Vector2f pos) const{
-    const int row = pos.y / mapRows;
-    const int col = pos.x / mapCols;
+    const int row = pos.y / tileWidth;
+    const int col = pos.x / tileHeight;
+   
     return std::make_pair(row, col);
 }
+
+
+
+int TileMap::getPlayerStartingRow() const{
+    for (int i = 0; i < mapRows; ++i) {
+        if (map[i][mapCentreCol] != SKY) // Use getTile to access elements
+            return i-1;
+    }
+    return -1; 
+}
+
 
 
 bool TileMap::isCollidingWithTerrain(std::pair<int, int> array_pos) const {

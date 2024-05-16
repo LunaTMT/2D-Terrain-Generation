@@ -15,7 +15,7 @@ Game::Game() : window(sf::VideoMode(SCREEN_WIDTH, SCREEN_HEIGHT), "Flat 2D World
         std::exit(1);
     }
 
-    // Add player to gameActors vector
+
     gameActors.push_back(&player);
 }
 
@@ -58,6 +58,8 @@ void Game::handleKeyReleased(sf::Keyboard::Key key) {
         view.zoom(0.9f);
     } else if (key == sf::Keyboard::X) {
         view.zoom(1.1f);
+        sf::Vector2f size = view.getSize();
+        std::cout << size.x << " " << size.y << std::endl;
     }
 }
 
@@ -109,7 +111,7 @@ void Game::renderTileMap() {
         for (int col = startCol; col < endCol; ++col) {
             // Calculate the position of the tile on the screen
             sf::Vector2f tilePosition(col * tileWidth, row * tileHeight);
-
+            
             // Create and position the tile rectangle shape
             sf::RectangleShape tile(sf::Vector2f(tileWidth, tileHeight));
             tile.setPosition(tilePosition);
